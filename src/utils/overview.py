@@ -9,7 +9,7 @@ def story_overview(story_data):
 
     # Central Theme
     st.markdown("### ✨ Central Theme")
-    st.write(story_data["central_theme"])
+    st.write(story_data["central_theme"].title())
 
     # Characters and Plot Threads in Dropdowns
     with st.expander("👤 Protagonist Details"):
