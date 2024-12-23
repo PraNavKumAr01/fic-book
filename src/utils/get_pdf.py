@@ -10,23 +10,6 @@ class CustomPDF(FPDF):
         # Empty footer
         pass
 
-    def add_line_break_image(self, image_path):
-        # Get current page width
-        page_width = self.w
-        
-        # Set image width to be 1/3 of page width
-        image_width = page_width / 3
-        
-        # Calculate x position to center the image
-        x_pos = (page_width - image_width) / 2
-        
-        # Add the image
-        current_y = self.get_y()
-        self.image(image_path, x=x_pos, y=current_y, w=image_width)
-        
-        # Move y position below the image (assuming image height is proportional)
-        self.ln(10)  # Adjust this value based on your image height
-
 def parse_chapter(chapter_text):
     lines = chapter_text.strip().split("\n", 1)
     title_line = lines[0]
@@ -46,8 +29,6 @@ def parse_chapter(chapter_text):
 def create_pdf(output_path, story_title, story_theme, generated_chapters):
 
     pdf = CustomPDF()
-
-    line_break_image_path = "/Users/pranav/Documents/Projects/fic-book/src/assets/line_break.png"
     
     # First page with title and theme
     pdf.add_page()
@@ -75,9 +56,6 @@ def create_pdf(output_path, story_title, story_theme, generated_chapters):
         parsed_chapter = parse_chapter(chapter)
         if parsed_chapter:
             pdf.add_page()
-
-            # Add line break image between chapter number and title
-            pdf.add_line_break_image(line_break_image_path)
             
             # Add chapter number centered at top with larger font
             pdf.set_font("Times", 'B', size=25)

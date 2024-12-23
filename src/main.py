@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 
 from utils.llm_provider import LLMProvider
 from utils.get_pdf import create_pdf
+from utils.overview import story_overview
 from agents.plot_planner import PlotPlannerAgent
 from agents.summary_agent import ChapterSummaryAgent
 from agents.chapter_writer import ChapterWritingAgent
@@ -15,8 +16,17 @@ from agents.scene_writer import ScenePlanningAgent
 load_dotenv()
 
 def main():
+    st.set_page_config(layout="wide")
     st.title("Infinite Fiction Generator")
     
+    # Initialize session state for persistence
+    if "story_title" not in st.session_state:
+        st.session_state["story_title"] = None
+    if "story_theme" not in st.session_state:
+        st.session_state["story_theme"] = None
+    if "generated_chapters" not in st.session_state:
+        st.session_state["generated_chapters"] = []
+
     # Initialize LLM Provider
     llm_provider = LLMProvider(api_key=os.getenv('GROQ_API_KEY'))
     
@@ -40,20 +50,22 @@ def main():
     
     # Number of chapters to generate
     num_chapters = st.slider("Number of Chapters", 1, 10, 3)
-    
+
     if st.button("Generate Story"):
         # Generate Initial Story Context
         story_context = plot_planner.generate_story_structure(
             story_prompt, 
             genre.lower()
         )
-        
-        # Display Story Context
-        st.write("### Story Overview")
-        st.json(story_context.__dict__)
+
+        story_context_dict = story_context.__dict__
+        st.session_state["story_title"] = story_context_dict['title']
+        st.session_state["story_theme"] = story_context_dict['central_theme']
+
+        story_overview(story_context_dict)
         
         # Generate Chapters
-        generated_chapters = []
+        st.session_state["generated_chapters"] = []
         previous_summary = None
         
         for i in range(num_chapters):
@@ -65,8 +77,6 @@ def main():
                 previous_summary
             )
 
-            st.success(scene_layout)
-            
             # Generate Chapter
             chapter_content = chapter_writer.generate_chapter(
                 story_context, 
@@ -83,7 +93,7 @@ def main():
                 scene_layout
             )
 
-            generated_chapters.append(refined_chapter_content)
+            st.session_state["generated_chapters"].append(refined_chapter_content)
             
             # Generate Chapter Summary
             chapter_summary = summary_agent.generate_chapter_summary(chapter_content, previous_summary)
@@ -101,19 +111,20 @@ def main():
                 st.write(chapter_content)
                 st.write("### Chapter Summary")
                 st.write(chapter_summary)
-        
-        story_context_dict = story_context.__dict__
-        story_title = story_context_dict['title']
-        story_theme = story_context_dict['central_theme']
-        create_pdf('../output.pdf', story_title, story_theme, generated_chapters)
-        # Final Narrative Coherence Check
-        # coherence_report = narrative_tracker.check_narrative_coherence(
-        #     story_context, 
-        #     generated_chapters
-        # )
-        
-        # st.write("### Narrative Coherence Report")
-        # st.json(coherence_report)
+
+    # if st.session_state["generated_chapters"]:
+    #     if st.button("Download PDF"):
+    #         pdf_buffer = create_pdf(
+    #             st.session_state["story_title"], 
+    #             st.session_state["story_theme"], 
+    #             st.session_state["generated_chapters"]
+    #         )
+    #         st.download_button(
+    #             label="Click to Download",
+    #             data=pdf_buffer,
+    #             file_name="story.pdf",
+    #             mime="application/pdf"
+    #         )
 
 if __name__ == "__main__":
     main()
