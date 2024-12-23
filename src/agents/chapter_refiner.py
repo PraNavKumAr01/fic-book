@@ -10,7 +10,8 @@ class ChapterRefinerAgent:
         self,
         story_context: StoryContext,
         chapter_info: str,
-        chapter_content: str
+        chapter_content: str,
+        scene_layout: str
     ) -> str:
         """
         Refines a chapter by removing redundant or repetitive lines and enhancing articulation.
@@ -50,6 +51,8 @@ class ChapterRefinerAgent:
 
                 The context of the story is:
                 {context_injection}
+
+                This is the scene layout of the chapter, adhere to this layout while generating the chapter : {scene_layout}
 
                 Start directly with the refined chapter, no details or text before or after that
                 Provide the refined chapter content below as a continuous story format:

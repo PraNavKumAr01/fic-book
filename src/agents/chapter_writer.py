@@ -10,7 +10,8 @@ class ChapterWritingAgent:
         self, 
         story_context: StoryContext, 
         chapter_info: str, 
-        previous_chapter_summary: str = None
+        scene_layout: str,
+        previous_chapter_summary: str = None,
     ) -> str:        
         """
         Generate a chapter with narrative continuity
@@ -50,6 +51,8 @@ class ChapterWritingAgent:
                             Make sure to add a lot of drama, fights, and emotions based on the genre of the story which is : {story_context.genre}
                             This is the entire context of the plot up untill now : {context_injection}
                             This context is only for you to understand and continue writing the story, dont include things like tension and charector details seperately in the chapter content.
+                            This is the scene layout of the chapter, adhere to this layout while generating the chapter : {scene_layout}
+                            Write the chapter in a continuous flow and dont mention the scenes as they were presented in the scene layout, the scenes are just to guide you towards how to write the chapter
                             The chapter content you provide has to be strictly like a story and not points. It should be how stories are written in books.
                             """
             }

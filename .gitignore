@@ -2,3 +2,4 @@
 /output.pdf
 src/.env
 src/.DS_Store
+**/__pycache__/

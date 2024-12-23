@@ -9,6 +9,7 @@ from agents.summary_agent import ChapterSummaryAgent
 from agents.chapter_writer import ChapterWritingAgent
 from agents.narrative_tracker import NarrativeTrackingAgent
 from agents.chapter_refiner import ChapterRefinerAgent
+from agents.scene_writer import ScenePlanningAgent
 
 # Load environment variables
 load_dotenv()
@@ -25,6 +26,7 @@ def main():
     chapter_writer = ChapterWritingAgent(llm_provider)
     chapter_refiner = ChapterRefinerAgent(llm_provider)
     narrative_tracker = NarrativeTrackingAgent(llm_provider)
+    scene_planner = ScenePlanningAgent(llm_provider)
     
     # User Input
     story_prompt = st.text_input("Enter your story concept:")
@@ -56,11 +58,20 @@ def main():
         
         for i in range(num_chapters):
             st.write(f"### Generating Chapter {i+1}")
+
+            scene_layout = scene_planner.plan_chapter_scenes(
+                story_context,
+                [i + 1, num_chapters], 
+                previous_summary
+            )
+
+            st.success(scene_layout)
             
             # Generate Chapter
             chapter_content = chapter_writer.generate_chapter(
                 story_context, 
-                [i + 1, num_chapters], 
+                [i + 1, num_chapters],
+                scene_layout,
                 previous_summary
             )
 
@@ -68,7 +79,8 @@ def main():
             refined_chapter_content = chapter_refiner.refine_chapter(
                 story_context,
                 [i + 1, num_chapters],
-                chapter_content
+                chapter_content,
+                scene_layout
             )
 
             generated_chapters.append(refined_chapter_content)
