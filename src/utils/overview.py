@@ -1,15 +1,14 @@
 import streamlit as st
-import json
 
 def story_overview(story_data):
 
     # Title and Genre
     st.title(story_data["title"])
-    st.caption(story_data["genre"])
+    st.caption(str(story_data["genre"]).title())
 
     # Central Theme
     st.markdown("### ✨ Central Theme")
-    st.write(story_data["central_theme"].title())
+    st.write(story_data["central_theme"])
 
     # Characters and Plot Threads in Dropdowns
     with st.expander("👤 Protagonist Details"):

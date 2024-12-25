@@ -112,19 +112,5 @@ def main():
                 st.write("### Chapter Summary")
                 st.write(chapter_summary)
 
-    # if st.session_state["generated_chapters"]:
-    #     if st.button("Download PDF"):
-    #         pdf_buffer = create_pdf(
-    #             st.session_state["story_title"], 
-    #             st.session_state["story_theme"], 
-    #             st.session_state["generated_chapters"]
-    #         )
-    #         st.download_button(
-    #             label="Click to Download",
-    #             data=pdf_buffer,
-    #             file_name="story.pdf",
-    #             mime="application/pdf"
-    #         )
-
 if __name__ == "__main__":
     main()

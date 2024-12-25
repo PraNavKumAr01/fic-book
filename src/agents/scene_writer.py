@@ -65,6 +65,52 @@ class ScenePlanningAgent:
         
         return self.llm.generate_completion(messages)
     
+    def modify_chapter_scenes(
+        self,
+        story_context: StoryContext,
+        chapter_info: str,
+        existing_scenes: str,
+        additional_prompt: str,
+        previous_chapter_summary: str = None
+    ) -> str:
+        context_injection = self._prepare_context_injection(
+            story_context,
+            f"Chapter {chapter_info[0]}",
+            previous_chapter_summary
+        )
+        
+        messages = [
+            {
+                "role": "system",
+                "content": """
+                You are a master story planner tasked with modifying an existing chapter's scenes.
+                Key guidelines:
+                - Adhere to the additional prompt provided
+                - Retain logical flow and coherence with the existing story
+                - Balance action, dialogue, and description
+                - Maintain narrative pacing and tension
+
+                Modify the provided scene breakdown based on the additional prompt.
+                Ensure the changes advance both plot and character development while enhancing tension.
+                """
+            },
+            {
+                "role": "user", 
+                "content": f"""Modify the scenes for chapter {chapter_info[0]} of {chapter_info[1]}.
+                
+                Existing Scenes: {existing_scenes}
+                
+                Additional Prompt: {additional_prompt}
+                
+                Context: {context_injection}
+
+                Provide the modified scene breakdown directly, no text before or after it.
+                """
+            }
+        ]
+        
+        return self.llm.generate_completion(messages)
+
     def _prepare_context_injection(
         self,
         story_context: StoryContext,
