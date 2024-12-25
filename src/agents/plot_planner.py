@@ -58,7 +58,7 @@ class PlotPlannerAgent:
             }
         ]
         
-        response = self.llm.generate_completion(messages)
+        response = self.llm.generate_completion(messages, model='llama-3.3-70b-versatile')
         
         try:
             story_data = json.loads(response)
@@ -131,7 +131,7 @@ class PlotPlannerAgent:
             }
         ]
 
-        response = self.llm.generate_completion(messages)
+        response = self.llm.generate_completion(messages, model='llama-3.3-70b-versatile')
 
         try:
             modified_story_data = json.loads(response)

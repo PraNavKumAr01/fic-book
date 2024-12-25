@@ -63,7 +63,7 @@ class ScenePlanningAgent:
             }
         ]
         
-        return self.llm.generate_completion(messages)
+        return self.llm.generate_completion(messages, model='llama-3.3-70b-versatile')
     
     def modify_chapter_scenes(
         self,
@@ -109,7 +109,7 @@ class ScenePlanningAgent:
             }
         ]
         
-        return self.llm.generate_completion(messages)
+        return self.llm.generate_completion(messages, model='llama-3.3-70b-versatile')
 
     def _prepare_context_injection(
         self,

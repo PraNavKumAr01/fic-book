@@ -85,7 +85,7 @@ def main():
         ])
         num_chapters = st.slider("Number of Chapters", 1, 10, 3)
         
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns(3)
         with col1:
             if st.button("Quick Generation"):
                 st.session_state.generation_mode = "quick"
@@ -98,7 +98,7 @@ def main():
                 st.session_state.story_theme = story_context.__dict__['central_theme']
                 st.rerun()
                 
-        with col2:
+        with col3:
             if st.button("Advanced Generation"):
                 st.session_state.generation_mode = "advanced"
                 st.session_state.num_chapters = num_chapters
@@ -112,9 +112,16 @@ def main():
     
     if st.session_state.generation_mode == "quick":
         story_overview(st.session_state.story_context.__dict__)
+
+        st.divider()
+        
+        progress_placeholder = st.empty()
+        chapters_container = st.container()
         
         if not st.session_state.generated_chapters:
             for i in range(st.session_state.num_chapters):
+                progress_placeholder.write(f"Generating Chapter {i+1}...")
+                
                 chapter, scene_layout = generate_chapter(
                     st.session_state.story_context,
                     i + 1,
@@ -126,6 +133,10 @@ def main():
                 )
                 
                 st.session_state.generated_chapters.append(chapter)
+                with chapters_container:
+                    with st.expander(f"Chapter {i+1}", expanded=True):
+                        st.write(chapter)
+                
                 chapter_summary = summary_agent.generate_chapter_summary(
                     chapter,
                     st.session_state.previous_summary
@@ -136,13 +147,18 @@ def main():
                     chapter,
                     st.session_state.previous_summary
                 )
-        
-        for i, chapter in enumerate(st.session_state.generated_chapters):
-            with st.expander(f"Chapter {i+1}"):
-                st.write(chapter)
+            
+            progress_placeholder.empty()
+        else:
+            for i, chapter in enumerate(st.session_state.generated_chapters):
+                with chapters_container:
+                    with st.expander(f"Chapter {i+1}"):
+                        st.write(chapter)
     
     elif st.session_state.generation_mode == "advanced":
         story_overview(st.session_state.story_context.__dict__)
+
+        st.divider()
         
         if st.session_state.current_chapter <= st.session_state.num_chapters:
             st.subheader(f"Chapter {st.session_state.current_chapter} Generation")
