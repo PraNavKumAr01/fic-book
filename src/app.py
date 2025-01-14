@@ -85,8 +85,8 @@ def main():
         ])
         num_chapters = st.slider("Number of Chapters", 1, 10, 3)
         
-        col1, col2, col3 = st.columns(3)
-        with col1:
+        _, _, col3, col4, _, _ = st.columns(6)
+        with col3:
             if st.button("Quick Generation"):
                 st.session_state.generation_mode = "quick"
                 st.session_state.num_chapters = num_chapters
@@ -98,7 +98,7 @@ def main():
                 st.session_state.story_theme = story_context.__dict__['central_theme']
                 st.rerun()
                 
-        with col3:
+        with col4:
             if st.button("Advanced Generation"):
                 st.session_state.generation_mode = "advanced"
                 st.session_state.num_chapters = num_chapters
